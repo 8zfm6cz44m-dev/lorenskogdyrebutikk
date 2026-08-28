@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
 
@@ -63,13 +64,13 @@
     <h2>Dropin i salongen</h2>
     <p class="section-lead">Bare kom innom – ingen forhåndsbestilling kreves for disse to tjenestene.</p>
     <div class="dropin-cards">
-      <div class="dropin-card">
+      <div class="dropin-card" data-price-section="dropin" data-price-name="Kloklipp">
         <div class="dropin-icon">✂️</div>
         <h3>Kloklipp</h3>
         <p class="price">150,-</p>
         <p class="dropin-desc">Rask og skånsom klipping av klørne, utført av erfarne hender.</p>
       </div>
-      <div class="dropin-card">
+      <div class="dropin-card" data-price-section="dropin" data-price-name="Poterens">
         <div class="dropin-icon">🐾</div>
         <h3>Poterens</h3>
         <p class="price">150,-</p>
@@ -93,27 +94,27 @@
           <tr><th>Behandling</th><th>Liten rase</th><th>Mellomstor rase</th><th>Stor rase</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td data-label="Behandling"><strong>Kun vask</strong><br><span class="muted">Skånsom vask med hundeshampo tilpasset pels og hudtype, grundig skyll og tørk</span></td>
-            <td data-label="Liten rase">Fra 600,-</td>
-            <td data-label="Mellomstor rase">Fra 800,-</td>
-            <td data-label="Stor rase">Fra 1000,-</td>
+          <tr data-price-name="Kun vask">
+            <td data-label="Behandling" data-price-cell="description"><strong>Kun vask</strong><br><span class="muted">Skånsom vask med hundeshampo tilpasset pels og hudtype, grundig skyll og tørk</span></td>
+            <td data-label="Liten rase" data-price-cell="liten">Fra 600,-</td>
+            <td data-label="Mellomstor rase" data-price-cell="mellomstor">Fra 800,-</td>
+            <td data-label="Stor rase" data-price-cell="stor">Fra 1000,-</td>
           </tr>
-          <tr>
-            <td data-label="Behandling"><strong>Vask + børst</strong><br><span class="muted">Inkluderer vask, føn og grundig børsting for å fjerne løs pels og underull</span></td>
-            <td data-label="Liten rase">Fra 800,-</td>
-            <td data-label="Mellomstor rase">Fra 1000,-</td>
-            <td data-label="Stor rase">Fra 1200,-</td>
+          <tr data-price-name="Vask + børst">
+            <td data-label="Behandling" data-price-cell="description"><strong>Vask + børst</strong><br><span class="muted">Inkluderer vask, føn og grundig børsting for å fjerne løs pels og underull</span></td>
+            <td data-label="Liten rase" data-price-cell="liten">Fra 800,-</td>
+            <td data-label="Mellomstor rase" data-price-cell="mellomstor">Fra 1000,-</td>
+            <td data-label="Stor rase" data-price-cell="stor">Fra 1200,-</td>
           </tr>
-          <tr>
+          <tr data-price-name="Rasetyper med omfattende underull">
             <td data-label="Behandling"><strong>Rasetyper med omfattende underull</strong></td>
-            <td colspan="3" data-label="Pris">Fra 2000,-</td>
+            <td colspan="3" data-label="Pris" data-price-cell="flat">Fra 2000,-</td>
           </tr>
-          <tr>
-            <td data-label="Behandling"><strong>Full pakke</strong><br><span class="muted">Komplett behandling: vask, føn, børsting, klipp, samt stell av poter, ører og hygieneområder</span></td>
-            <td data-label="Liten rase">Fra 1400,-</td>
-            <td data-label="Mellomstor rase">Fra 1500,-</td>
-            <td data-label="Stor rase">Fra 1700,-</td>
+          <tr data-price-name="Full pakke">
+            <td data-label="Behandling" data-price-cell="description"><strong>Full pakke</strong><br><span class="muted">Komplett behandling: vask, føn, børsting, klipp, samt stell av poter, ører og hygieneområder</span></td>
+            <td data-label="Liten rase" data-price-cell="liten">Fra 1400,-</td>
+            <td data-label="Mellomstor rase" data-price-cell="mellomstor">Fra 1500,-</td>
+            <td data-label="Stor rase" data-price-cell="stor">Fra 1700,-</td>
           </tr>
         </tbody>
       </table>
@@ -134,9 +135,58 @@
         <li>Børst &amp; bad</li>
         <li>Kloklipp (også som dropin)</li>
       </ul>
-      <div class="hero-actions">
-        <a href="tel:+4797262060" class="btn btn-accent">Ring for timebestilling</a>
-      </div>
+
+      <form id="booking-form" class="booking-form" novalidate>
+        <div class="form-row">
+          <label for="bf-name">Navn *</label>
+          <input type="text" id="bf-name" name="name" required autocomplete="name">
+        </div>
+        <div class="form-row">
+          <label for="bf-phone">Telefon *</label>
+          <input type="tel" id="bf-phone" name="phone" required autocomplete="tel">
+        </div>
+        <div class="form-row">
+          <label for="bf-service">Ønsket behandling *</label>
+          <select id="bf-service" name="service" required>
+            <option value="" disabled selected>Velg behandling …</option>
+            <option>Kun vask</option>
+            <option>Vask + børst</option>
+            <option>Full pakke</option>
+            <option>Rasetyper med omfattende underull</option>
+            <option>Kloklipp</option>
+            <option>Poterens</option>
+            <option>Annet / usikker</option>
+          </select>
+        </div>
+        <div class="form-row form-row-split">
+          <div>
+            <label for="bf-date">Ønsket dato</label>
+            <input type="date" id="bf-date" name="preferred_date">
+          </div>
+          <div>
+            <label for="bf-time">Ønsket tid</label>
+            <select id="bf-time" name="preferred_time">
+              <option value="">Uansett</option>
+              <option>Formiddag</option>
+              <option>Ettermiddag</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="bf-message">Melding (rase, størrelse, spesielle behov …)</label>
+          <textarea id="bf-message" name="message" rows="3"></textarea>
+        </div>
+        <div class="form-row form-row-checkbox">
+          <label class="checkbox-label">
+            <input type="checkbox" id="bf-photo" name="photo_ok" checked>
+            Det er greit at dere fotograferer hunden min til Facebook/Instagram/TikTok
+          </label>
+        </div>
+        <button type="submit" class="btn btn-accent" id="bf-submit">Send bestilling</button>
+        <p class="form-status" id="bf-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <p class="dropin-note small">Foretrekker du å ringe? <a href="tel:+4797262060">972 62 060</a>.</p>
       <p class="dropin-note">📷 Vi tar gjerne bilder av hundene som besøker oss, til bruk på Facebook, Instagram og TikTok. Ønsker du ikke at hunden din blir fotografert, si gjerne fra til oss.</p>
     </div>
     <div class="placeholder-img" aria-hidden="true">
@@ -205,6 +255,9 @@
   </div>
 </footer>
 
-<script src="js/main.js"></script>
+<script src="js/supabase-config.js" defer></script>
+<script src="js/prices.js" defer></script>
+<script src="js/booking.js" defer></script>
+<script src="js/main.js" defer></script>
 </body>
 </html>

@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
 
@@ -76,13 +77,13 @@
     <h2>Dropin i salongen</h2>
     <p class="section-lead">Kloklipp og poterens tilbys som dropin hos vår avdeling på Vestparken – bare kom innom, ingen forhåndsbestilling kreves.</p>
     <div class="dropin-cards">
-      <div class="dropin-card">
+      <div class="dropin-card" data-price-section="dropin" data-price-name="Kloklipp">
         <div class="dropin-icon">✂️</div>
         <h3>Kloklipp</h3>
         <p class="price">150,-</p>
         <p class="dropin-desc">Rask og skånsom klipping av klørne, utført av erfarne hender.</p>
       </div>
-      <div class="dropin-card">
+      <div class="dropin-card" data-price-section="dropin" data-price-name="Poterens">
         <div class="dropin-icon">🐾</div>
         <h3>Poterens</h3>
         <p class="price">150,-</p>
@@ -158,6 +159,8 @@
   </div>
 </footer>
 
-<script src="js/main.js"></script>
+<script src="js/supabase-config.js" defer></script>
+<script src="js/prices.js" defer></script>
+<script src="js/main.js" defer></script>
 </body>
 </html>

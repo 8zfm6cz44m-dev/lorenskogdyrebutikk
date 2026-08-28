@@ -39,3 +39,23 @@ Alle andre bilder på siden er midlertidige plassholdere (mørke rutemønstre me
 ## Neste fase: nettbutikk
 
 Denne siden dekker markedsføringsdelen. Nettbutikken (fase 2, planlagt på Shopify) bygges og kobles på separat – ta kontakt når dere er klare for det steget.
+
+## Timebestilling, admin-side og prisoppdatering
+
+Nettsiden bruker [Supabase](https://supabase.com) (gratis nivå) som en liten "backend" for tre ting:
+
+1. **Timebestilling** på `hundesalong.html` – erstatter Google-skjemaet, lagres i tabellen `bookings`.
+2. **`admin.html`** – en side som IKKE er lenket fra noe sted på nettsiden og er blokkert for søkemotorer (`robots.txt` + `noindex`), men som krever innlogging. Her ser dere bookinger og kan oppdatere status.
+3. **Priser** – prisene på Hundesalong-siden (dropin + stelltabell) hentes fra tabellen `prices` og kan redigeres fra admin-siden, enten rad for rad eller ved å laste opp en Excel-fil.
+
+### Oppsett (gjøres én gang)
+
+1. Opprett et gratis prosjekt på [supabase.com](https://supabase.com).
+2. Åpne **SQL Editor** i Supabase og kjør hele innholdet i `supabase-schema.sql` (ligger i denne mappen) – det oppretter tabellene og fyller inn dagens priser.
+3. Gå til **Project Settings → API** og hent **Project URL** og **anon public key**.
+4. Lim disse inn i `js/supabase-config.js` (`SUPABASE_URL` og `SUPABASE_ANON_KEY`).
+5. Gå til **Authentication → Users** i Supabase og opprett en admin-bruker (e-post + passord) – dette er innloggingen til `admin.html`.
+
+Helt til dette er gjort viser nettsiden statiske priser og en beskjed om at nettbestilling ikke er aktivert ennå – resten av siden fungerer som normalt.
+
+**Del aldri lenken til `admin.html` offentlig** – den er ikke lenket noe sted, men er kun beskyttet av innlogging, ikke av at adressen er hemmelig.

@@ -253,6 +253,66 @@ a:hover { text-decoration: underline; }
 .dropin-desc { color: var(--muted); font-size: .92rem; margin: 0; }
 .dropin-note { color: var(--muted); font-size: .9rem; }
 
+/* ---------- Booking form ---------- */
+.booking-form {
+  margin-top: 1.8em;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.form-row { margin-bottom: 16px; }
+.form-row:last-of-type { margin-bottom: 0; }
+.form-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.booking-form label {
+  display: block;
+  font-size: .85rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.booking-form input[type="text"],
+.booking-form input[type="tel"],
+.booking-form input[type="date"],
+.booking-form select,
+.booking-form textarea {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: .95rem;
+}
+.booking-form input:focus,
+.booking-form select:focus,
+.booking-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.form-row-checkbox { margin-top: 4px; }
+.checkbox-label {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: .85rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.checkbox-label input { width: auto; margin-top: 3px; }
+.booking-form .btn { margin-top: 6px; }
+.form-status {
+  margin: 10px 0 0;
+  font-size: .88rem;
+  min-height: 1.3em;
+}
+.form-status.is-ok { color: #7CD98A; }
+.form-status.is-error { color: #E88C8C; }
+
 /* ---------- Price table ---------- */
 .price-table-wrap {
   overflow-x: auto;
@@ -412,4 +472,5 @@ a:hover { text-decoration: underline; }
   .header-cta { display: none; }
   .nav-toggle { display: flex; }
   .section { padding: 52px 0; }
+  .form-row-split { grid-template-columns: 1fr; }
 }

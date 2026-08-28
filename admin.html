@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Admin – Lørenskog Dyrebutikk</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+</head>
+<body class="admin-body">
+
+<header class="admin-header">
+  <div class="container admin-header-inner">
+    <img src="assets/logo.png" alt="Lørenskog Dyrebutikk" class="admin-logo">
+    <span class="admin-title">Admin</span>
+    <button id="logout-btn" class="btn btn-outline btn-small" hidden>Logg ut</button>
+  </div>
+</header>
+
+<main class="container admin-main">
+
+  <!-- ===== LOGIN ===== -->
+  <section id="login-view" class="admin-card">
+    <h1>Logg inn</h1>
+    <p class="muted small">Kun for ansatte hos Lørenskog Dyrebutikk / Hundesalong.</p>
+    <form id="login-form" class="booking-form" novalidate>
+      <div class="form-row">
+        <label for="login-email">E-post</label>
+        <input type="email" id="login-email" required autocomplete="username">
+      </div>
+      <div class="form-row">
+        <label for="login-password">Passord</label>
+        <input type="password" id="login-password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-accent">Logg inn</button>
+      <p class="form-status" id="login-status" role="status" aria-live="polite"></p>
+    </form>
+    <p class="fine-print" id="config-warning" hidden>
+      Supabase er ikke konfigurert ennå (js/supabase-config.js). Admin-siden fungerer først når prosjektet er koblet til.
+    </p>
+  </section>
+
+  <!-- ===== ADMIN (etter innlogging) ===== -->
+  <section id="admin-view" class="admin-card" hidden>
+
+    <div class="admin-tabs">
+      <button class="admin-tab is-active" data-tab="bookings">Bookinger</button>
+      <button class="admin-tab" data-tab="prices">Priser</button>
+    </div>
+
+    <!-- --- BOOKINGER --- -->
+    <div class="admin-panel" id="panel-bookings">
+      <div class="admin-panel-head">
+        <h2>Bookinger</h2>
+        <button id="refresh-bookings" class="btn btn-outline btn-small">Oppdater</button>
+      </div>
+      <p class="muted small" id="bookings-empty" hidden>Ingen bookinger ennå.</p>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="bookings-table">
+          <thead>
+            <tr>
+              <th>Mottatt</th>
+              <th>Navn</th>
+              <th>Telefon</th>
+              <th>Behandling</th>
+              <th>Ønsket dato</th>
+              <th>Ønsket tid</th>
+              <th>Melding</th>
+              <th>Foto ok</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- --- PRISER --- -->
+    <div class="admin-panel" id="panel-prices" hidden>
+      <div class="admin-panel-head">
+        <h2>Priser</h2>
+        <div class="admin-panel-actions">
+          <button id="download-template" class="btn btn-outline btn-small">Last ned som Excel</button>
+          <label class="btn btn-accent btn-small file-btn">
+            Importer Excel
+            <input type="file" id="import-file" accept=".xlsx,.xls" hidden>
+          </label>
+        </div>
+      </div>
+      <p class="fine-print">
+        Excel-filen må ha kolonnene <code>section</code>, <code>name</code>, <code>description</code>,
+        <code>price_liten</code>, <code>price_mellomstor</code>, <code>price_stor</code>, <code>price_flat</code>, <code>sort_order</code>.
+        Bruk «Last ned som Excel» for å få en fil med riktig format og dagens priser, rediger den, og last opp igjen.
+        <code>section</code> må være <code>dropin</code> eller <code>stell</code> — raden oppdateres basert på <code>section</code> + <code>name</code>.
+      </p>
+      <p class="form-status" id="import-status" role="status" aria-live="polite"></p>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="prices-table">
+          <thead>
+            <tr>
+              <th>Seksjon</th>
+              <th>Navn</th>
+              <th>Beskrivelse</th>
+              <th>Liten</th>
+              <th>Mellomstor</th>
+              <th>Stor</th>
+              <th>Fast pris</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="prices-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<script src="js/supabase-config.js" defer></script>
+<script src="js/admin.js" defer></script>
+</body>
+</html>
