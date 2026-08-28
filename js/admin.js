@@ -72,18 +72,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- Bookinger ----------
   const bookingsTbody = document.getElementById('bookings-tbody');
   const bookingsEmpty = document.getElementById('bookings-empty');
+  const bookingsArchivedNote = document.getElementById('bookings-archived-note');
+  const showArchivedCheckbox = document.getElementById('show-archived');
   const STATUS_OPTIONS = ['ny', 'bekreftet', 'avvist', 'fullført'];
 
   async function loadBookings() {
     const { data, error } = await sb.from('bookings').select('*').order('created_at', { ascending: false });
     if (error) { console.error(error); return; }
+
+    const showArchived = showArchivedCheckbox.checked;
+    const archivedCount = data.filter(b => b.status === 'fullført').length;
+    const visible = showArchived ? data : data.filter(b => b.status !== 'fullført');
+
     bookingsTbody.innerHTML = '';
     bookingsEmpty.hidden = data.length > 0;
-    data.forEach(b => {
+    bookingsArchivedNote.hidden = showArchived || archivedCount === 0;
+    bookingsArchivedNote.textContent = `${archivedCount} fullført${archivedCount === 1 ? '' : 'e'} booking${archivedCount === 1 ? '' : 'er'} er arkivert og skjult — kryss av "Vis arkiv" for å se dem.`;
+
+    visible.forEach(b => {
       const tr = document.createElement('tr');
+      tr.dataset.status = b.status;
 
       const statusSelect = document.createElement('select');
       statusSelect.className = 'status-select';
+      statusSelect.dataset.status = b.status;
       STATUS_OPTIONS.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s;
@@ -92,7 +104,15 @@ document.addEventListener('DOMContentLoaded', () => {
         statusSelect.appendChild(opt);
       });
       statusSelect.addEventListener('change', async () => {
-        await sb.from('bookings').update({ status: statusSelect.value }).eq('id', b.id);
+        const newStatus = statusSelect.value;
+        // Oppdater farge på rad + felt med det samme, uten å vente på nettverket
+        tr.dataset.status = newStatus;
+        statusSelect.dataset.status = newStatus;
+        await sb.from('bookings').update({ status: newStatus }).eq('id', b.id);
+        // Fullført skal arkiveres (skjules) med mindre "Vis arkiv" er krysset av
+        if (newStatus === 'fullført' && !showArchivedCheckbox.checked) {
+          loadBookings();
+        }
       });
 
       const cells = [
@@ -116,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   document.getElementById('refresh-bookings').addEventListener('click', loadBookings);
+  showArchivedCheckbox.addEventListener('change', loadBookings);
 
   // ---------- Priser ----------
   const pricesTbody = document.getElementById('prices-tbody');

@@ -59,9 +59,16 @@
     <div class="admin-panel" id="panel-bookings">
       <div class="admin-panel-head">
         <h2>Bookinger</h2>
-        <button id="refresh-bookings" class="btn btn-outline btn-small">Oppdater</button>
+        <div class="admin-panel-actions">
+          <label class="bookings-filter">
+            <input type="checkbox" id="show-archived">
+            Vis arkiv (fullførte)
+          </label>
+          <button id="refresh-bookings" class="btn btn-outline btn-small">Oppdater</button>
+        </div>
       </div>
       <p class="muted small" id="bookings-empty" hidden>Ingen bookinger ennå.</p>
+      <p class="muted small" id="bookings-archived-note" hidden></p>
       <div class="admin-table-wrap">
         <table class="admin-table" id="bookings-table">
           <thead>

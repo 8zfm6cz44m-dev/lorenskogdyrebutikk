@@ -113,3 +113,30 @@
 }
 .admin-table .status-select { min-width: 120px; }
 .row-save-btn { white-space: nowrap; }
+
+/* ---------- Status-farger på bookinger ---------- */
+/* Bakgrunn fungerer fint på <tr>, men border-left må settes på cellen
+   siden border-collapse:collapse ignorerer border på selve <tr>-elementet. */
+.admin-table tr[data-status="ny"] td:first-child { border-left: 3px solid var(--accent); }
+.admin-table tr[data-status="bekreftet"] { background: rgba(124, 217, 138, .06); }
+.admin-table tr[data-status="bekreftet"] td:first-child { border-left: 3px solid #7CD98A; }
+.admin-table tr[data-status="avvist"] { background: rgba(232, 140, 140, .06); }
+.admin-table tr[data-status="avvist"] td:first-child { border-left: 3px solid #E88C8C; }
+.admin-table tr[data-status="fullført"] { opacity: .6; }
+.admin-table tr[data-status="fullført"] td:first-child { border-left: 3px solid var(--muted); }
+
+.status-select[data-status="ny"] { border-color: var(--accent); color: var(--accent); }
+.status-select[data-status="bekreftet"] { border-color: #7CD98A; color: #7CD98A; }
+.status-select[data-status="avvist"] { border-color: #E88C8C; color: #E88C8C; }
+.status-select[data-status="fullført"] { border-color: var(--muted); color: var(--muted); }
+
+.bookings-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .85rem;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.bookings-filter input { cursor: pointer; }
