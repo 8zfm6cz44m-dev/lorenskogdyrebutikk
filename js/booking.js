@@ -11,11 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // at nettleseren viser en kalender for <input type="date">. Viser dato på
   // norsk (dd.mm.åååå) men lagrer i ISO-format (åååå-mm-dd) i skjemafeltet,
   // som matcher "date"-kolonnen i Supabase.
-  const dateInput = document.getElementById('bf-date');
-  if (dateInput && window.flatpickr) {
-    if (window.flatpickr.l10ns && window.flatpickr.l10ns.no) {
-      window.flatpickr.localize(window.flatpickr.l10ns.no);
+  // CDN-skriptet er "defer", så det skal i teorien alltid være klart før dette
+  // kjører — men vi venter uansett litt ekstra (opptil ~1s) i tilfelle en treg
+  // nettverksforbindelse eller nettleser-utvidelse forsinker lastingen.
+  function initDatePicker(attemptsLeft) {
+    const dateInput = document.getElementById('bf-date');
+    if (!dateInput) return;
+    if (!window.flatpickr) {
+      if (attemptsLeft > 0) setTimeout(() => initDatePicker(attemptsLeft - 1), 100);
+      return;
     }
+    try {
+      if (window.flatpickr.l10ns && window.flatpickr.l10ns.no) {
+        window.flatpickr.localize(window.flatpickr.l10ns.no);
+      }
+    } catch (e) { /* fortsett uten norsk oversettelse hvis dette skulle feile */ }
     window.flatpickr(dateInput, {
       dateFormat: 'Y-m-d',
       altInput: true,
@@ -25,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
       disableMobile: true,
     });
   }
+  initDatePicker(10);
 
   const statusEl = document.getElementById('bf-status');
   const submitBtn = document.getElementById('bf-submit');
