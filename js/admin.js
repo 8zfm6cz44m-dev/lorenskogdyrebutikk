@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const cells = [
         new Date(b.created_at).toLocaleString('no-NO', { dateStyle: 'short', timeStyle: 'short' }),
-        b.name, b.phone, b.service,
+        b.name, b.phone, b.breed || '–', b.service,
         b.preferred_date || '–',
         b.preferred_time || '–',
         b.message || '–',
@@ -126,32 +126,61 @@ document.addEventListener('DOMContentLoaded', () => {
     if (error) { console.error(error); return; }
     currentPrices = data;
     pricesTbody.innerHTML = '';
-    data.forEach(row => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${row.section}</td>
-        <td>${row.name}</td>
-        <td><input type="text" data-field="description" value="${(row.description || '').replace(/"/g, '&quot;')}"></td>
-        <td><input type="number" step="1" data-field="price_liten" value="${row.price_liten ?? ''}"></td>
-        <td><input type="number" step="1" data-field="price_mellomstor" value="${row.price_mellomstor ?? ''}"></td>
-        <td><input type="number" step="1" data-field="price_stor" value="${row.price_stor ?? ''}"></td>
-        <td><input type="number" step="1" data-field="price_flat" value="${row.price_flat ?? ''}"></td>
-        <td><button class="btn btn-outline btn-small row-save-btn">Lagre</button></td>
-      `;
-      tr.querySelector('.row-save-btn').addEventListener('click', async () => {
-        const toNum = v => (v === '' ? null : Number(v));
-        const update = {
-          description: tr.querySelector('[data-field="description"]').value || null,
-          price_liten: toNum(tr.querySelector('[data-field="price_liten"]').value),
-          price_mellomstor: toNum(tr.querySelector('[data-field="price_mellomstor"]').value),
-          price_stor: toNum(tr.querySelector('[data-field="price_stor"]').value),
-          price_flat: toNum(tr.querySelector('[data-field="price_flat"]').value),
-        };
-        await sb.from('prices').update(update).eq('id', row.id);
-      });
-      pricesTbody.appendChild(tr);
-    });
+    data.forEach(row => pricesTbody.appendChild(buildPriceRow(row)));
   }
+
+  function buildPriceRow(row) {
+    // row === null → ny, ikke lagret rad (manuelt tillagt). Ellers en eksisterende rad fra Supabase.
+    const isNew = row === null;
+    const tr = document.createElement('tr');
+
+    const sectionCell = isNew
+      ? `<select data-field="section"><option value="dropin">dropin</option><option value="stell">stell</option></select>`
+      : row.section;
+    const nameCell = isNew
+      ? `<input type="text" data-field="name" placeholder="Navn på tjeneste/produkt">`
+      : row.name;
+
+    tr.innerHTML = `
+      <td>${sectionCell}</td>
+      <td>${nameCell}</td>
+      <td><input type="text" data-field="description" value="${((row && row.description) || '').replace(/"/g, '&quot;')}"></td>
+      <td><input type="number" step="1" data-field="price_liten" value="${row?.price_liten ?? ''}"></td>
+      <td><input type="number" step="1" data-field="price_mellomstor" value="${row?.price_mellomstor ?? ''}"></td>
+      <td><input type="number" step="1" data-field="price_stor" value="${row?.price_stor ?? ''}"></td>
+      <td><input type="number" step="1" data-field="price_flat" value="${row?.price_flat ?? ''}"></td>
+      <td><button class="btn btn-outline btn-small row-save-btn">${isNew ? 'Legg til' : 'Lagre'}</button></td>
+    `;
+
+    tr.querySelector('.row-save-btn').addEventListener('click', async () => {
+      const toNum = v => (v === '' ? null : Number(v));
+      const get = field => tr.querySelector(`[data-field="${field}"]`).value;
+      const update = {
+        description: get('description') || null,
+        price_liten: toNum(get('price_liten')),
+        price_mellomstor: toNum(get('price_mellomstor')),
+        price_stor: toNum(get('price_stor')),
+        price_flat: toNum(get('price_flat')),
+      };
+
+      if (isNew) {
+        const section = get('section').trim();
+        const name = get('name').trim();
+        if (!name) { alert('Fyll inn et navn på raden før du legger til.'); return; }
+        const { error } = await sb.from('prices').insert({ ...update, section, name, sort_order: 99 });
+        if (error) { alert('Kunne ikke legge til: ' + error.message); return; }
+        loadPrices();
+      } else {
+        await sb.from('prices').update(update).eq('id', row.id);
+      }
+    });
+
+    return tr;
+  }
+
+  document.getElementById('add-price-row').addEventListener('click', () => {
+    pricesTbody.appendChild(buildPriceRow(null));
+  });
 
   // ---------- Excel: last ned mal / eksport ----------
   document.getElementById('download-template').addEventListener('click', () => {

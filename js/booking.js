@@ -7,6 +7,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('booking-form');
   if (!form) return;
 
+  // Ekte kalendervisning for "Ønsket dato" (flatpickr), i stedet for å stole på
+  // at nettleseren viser en kalender for <input type="date">. Viser dato på
+  // norsk (dd.mm.åååå) men lagrer i ISO-format (åååå-mm-dd) i skjemafeltet,
+  // som matcher "date"-kolonnen i Supabase.
+  const dateInput = document.getElementById('bf-date');
+  if (dateInput && window.flatpickr) {
+    if (window.flatpickr.l10ns && window.flatpickr.l10ns.no) {
+      window.flatpickr.localize(window.flatpickr.l10ns.no);
+    }
+    window.flatpickr(dateInput, {
+      dateFormat: 'Y-m-d',
+      altInput: true,
+      altFormat: 'd.m.Y',
+      minDate: 'today',
+      disable: [date => date.getDay() === 0], // stengt søndag
+      disableMobile: true,
+    });
+  }
+
   const statusEl = document.getElementById('bf-status');
   const submitBtn = document.getElementById('bf-submit');
 
@@ -31,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const payload = {
       name: fd.get('name')?.toString().trim(),
       phone: fd.get('phone')?.toString().trim(),
+      breed: fd.get('breed')?.toString().trim(),
       service: fd.get('service')?.toString().trim(),
       preferred_date: fd.get('preferred_date') || null,
       preferred_time: fd.get('preferred_time')?.toString().trim() || null,
@@ -38,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
       photo_ok: fd.get('photo_ok') === 'on',
     };
 
-    if (!payload.name || !payload.phone || !payload.service) {
-      setStatus('Fyll ut navn, telefon og ønsket behandling.', 'is-error');
+    if (!payload.name || !payload.phone || !payload.breed || !payload.service) {
+      setStatus('Fyll ut navn, telefon, rase og ønsket behandling.', 'is-error');
       submitBtn.disabled = false;
       return;
     }

@@ -9,6 +9,7 @@ create table if not exists public.bookings (
   created_at timestamptz not null default now(),
   name text not null,
   phone text not null,
+  breed text not null,
   service text not null,
   preferred_date date,
   preferred_time text,

@@ -1,0 +1,30 @@
+/* ============================================================
+   Flatpickr — tilpasset til det mørke temaet (dark.css som bas)
+   ============================================================ */
+
+.flatpickr-calendar {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.flatpickr-day.today {
+  border-color: var(--accent);
+}
+.flatpickr-day:hover {
+  background: var(--bg-alt);
+}
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-weekdays {
+  background: var(--bg-card);
+}
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+  color: var(--border);
+}
