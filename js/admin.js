@@ -116,15 +116,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      const cells = [
+      const cellsBefore = [
         new Date(b.created_at).toLocaleString('no-NO', { dateStyle: 'short', timeStyle: 'short' }),
         b.name, b.phone, b.dog_name || '–', b.breed || '–', b.service,
         b.preferred_date || '–',
         b.preferred_time || '–',
+      ];
+      cellsBefore.forEach(text => {
+        const td = document.createElement('td');
+        td.textContent = text;
+        tr.appendChild(td);
+      });
+
+      // Bekreftet tid — salongen skriver manuelt inn tiden de faktisk avtaler
+      // med kunden (kan avvike fra "Ønsket tid"). Lagres når feltet forlates.
+      const confirmedTd = document.createElement('td');
+      const confirmedInput = document.createElement('input');
+      confirmedInput.type = 'text';
+      confirmedInput.placeholder = 'f.eks. 14:30';
+      confirmedInput.value = b.confirmed_time || '';
+      confirmedInput.addEventListener('blur', async () => {
+        const value = confirmedInput.value.trim();
+        await sb.from('bookings').update({ confirmed_time: value || null }).eq('id', b.id);
+      });
+      confirmedInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); confirmedInput.blur(); }
+      });
+      confirmedTd.appendChild(confirmedInput);
+      tr.appendChild(confirmedTd);
+
+      const cellsAfter = [
         b.message || '–',
         b.photo_ok ? 'Ja' : 'Nei',
       ];
-      cells.forEach(text => {
+      cellsAfter.forEach(text => {
         const td = document.createElement('td');
         td.textContent = text;
         tr.appendChild(td);

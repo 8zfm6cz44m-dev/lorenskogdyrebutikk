@@ -14,6 +14,7 @@ create table if not exists public.bookings (
   service text not null,
   preferred_date date,
   preferred_time text,
+  confirmed_time text,
   message text,
   status text not null default 'ny' check (status in ('ny', 'bekreftet', 'avvist', 'fullført')),
   photo_ok boolean not null default true
