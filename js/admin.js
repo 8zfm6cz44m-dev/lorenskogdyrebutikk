@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const cells = [
         new Date(b.created_at).toLocaleString('no-NO', { dateStyle: 'short', timeStyle: 'short' }),
-        b.name, b.phone, b.breed || '–', b.service,
+        b.name, b.phone, b.dog_name || '–', b.breed || '–', b.service,
         b.preferred_date || '–',
         b.preferred_time || '–',
         b.message || '–',

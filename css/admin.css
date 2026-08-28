@@ -25,7 +25,7 @@
 
 .admin-main {
   padding: 48px 24px 80px;
-  max-width: 980px;
+  max-width: 1600px;
 }
 
 .admin-card {
@@ -78,7 +78,7 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 720px;
+  min-width: 860px;
   background: var(--bg-card);
   font-size: .88rem;
 }

@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const payload = {
       name: fd.get('name')?.toString().trim(),
       phone: fd.get('phone')?.toString().trim(),
+      dog_name: fd.get('dog_name')?.toString().trim(),
       breed: fd.get('breed')?.toString().trim(),
       service: fd.get('service')?.toString().trim(),
       preferred_date: fd.get('preferred_date') || null,
@@ -69,8 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
       photo_ok: fd.get('photo_ok') === 'on',
     };
 
-    if (!payload.name || !payload.phone || !payload.breed || !payload.service) {
-      setStatus('Fyll ut navn, telefon, rase og ønsket behandling.', 'is-error');
+    if (!payload.name || !payload.phone || !payload.dog_name || !payload.breed || !payload.service) {
+      setStatus('Fyll ut navn, telefon, hundens navn, størrelse og ønsket behandling.', 'is-error');
       submitBtn.disabled = false;
       return;
     }
