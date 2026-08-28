@@ -75,19 +75,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const bookingsArchivedNote = document.getElementById('bookings-archived-note');
   const showArchivedCheckbox = document.getElementById('show-archived');
   const STATUS_OPTIONS = ['ny', 'bekreftet', 'avvist', 'fullført'];
+  const ARCHIVED_STATUSES = ['fullført', 'avvist'];
 
   async function loadBookings() {
     const { data, error } = await sb.from('bookings').select('*').order('created_at', { ascending: false });
     if (error) { console.error(error); return; }
 
     const showArchived = showArchivedCheckbox.checked;
-    const archivedCount = data.filter(b => b.status === 'fullført').length;
-    const visible = showArchived ? data : data.filter(b => b.status !== 'fullført');
+    const archivedCount = data.filter(b => ARCHIVED_STATUSES.includes(b.status)).length;
+    const visible = showArchived ? data : data.filter(b => !ARCHIVED_STATUSES.includes(b.status));
 
     bookingsTbody.innerHTML = '';
     bookingsEmpty.hidden = data.length > 0;
     bookingsArchivedNote.hidden = showArchived || archivedCount === 0;
-    bookingsArchivedNote.textContent = `${archivedCount} fullført${archivedCount === 1 ? '' : 'e'} booking${archivedCount === 1 ? '' : 'er'} er arkivert og skjult — kryss av "Vis arkiv" for å se dem.`;
+    bookingsArchivedNote.textContent = `${archivedCount} fullført${archivedCount === 1 ? '' : 'e'}/avviste booking${archivedCount === 1 ? '' : 'er'} er arkivert og skjult — kryss av "Vis arkiv" for å se dem.`;
 
     visible.forEach(b => {
       const tr = document.createElement('tr');
@@ -109,8 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tr.dataset.status = newStatus;
         statusSelect.dataset.status = newStatus;
         await sb.from('bookings').update({ status: newStatus }).eq('id', b.id);
-        // Fullført skal arkiveres (skjules) med mindre "Vis arkiv" er krysset av
-        if (newStatus === 'fullført' && !showArchivedCheckbox.checked) {
+        // Fullført og avvist skal arkiveres (skjules) med mindre "Vis arkiv" er krysset av
+        if (ARCHIVED_STATUSES.includes(newStatus) && !showArchivedCheckbox.checked) {
           loadBookings();
         }
       });

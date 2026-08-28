@@ -33,31 +33,53 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- "Åpent nå" / "Stengt nå"-status i hero ---
-  // Elementet velger selv hvilken timetabell og hvilket firmanavn det gjelder,
-  // via data-hours-table og data-business, så samme skript funker på alle sider.
+  // Elementet velger selv hvilken timetabell det gjelder, via data-hours-table,
+  // så samme skript funker på alle sider. Vi viser ikke lenger firmanavnet i
+  // selve statusteksten (det står jo allerede i overskriften over).
   const statusEl = document.getElementById('open-status');
   if (statusEl) {
     const tableId = statusEl.dataset.hoursTable || 'hours-store';
-    const business = statusEl.dataset.business || 'oss';
-    const row = document.querySelector(`#${tableId} tr[data-day="${dayIndex}"]`);
-    if (row) {
-      const hoursText = row.children[1].textContent.trim();
-      if (hoursText.toLowerCase() === 'stengt') {
-        statusEl.textContent = `Stengt i dag hos ${business}`;
-        statusEl.classList.add('is-closed');
-      } else {
-        const [start, end] = hoursText.split('–').map(s => s.trim());
-        const toMinutes = t => {
-          const [h, m] = t.split(':').map(Number);
-          return h * 60 + m;
-        };
-        const nowMinutes = nowOslo.getHours() * 60 + nowOslo.getMinutes();
-        const isOpen = nowMinutes >= toMinutes(start) && nowMinutes < toMinutes(end);
-        statusEl.textContent = isOpen
-          ? `Åpent nå til ${end} hos ${business}`
-          : `Stengt nå · åpner ${start} hos ${business}`;
-        statusEl.classList.add(isOpen ? 'is-open' : 'is-closed');
+    const DAY_NAMES = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
+    const toMinutes = t => {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    };
+    const getRow = d => document.querySelector(`#${tableId} tr[data-day="${d}"]`);
+    const getHours = d => {
+      const row = getRow(d);
+      if (!row) return null;
+      const text = row.children[1].textContent.trim();
+      if (text.toLowerCase() === 'stengt') return null;
+      const [start, end] = text.split('–').map(s => s.trim());
+      return { start, end };
+    };
+
+    const todayHours = getHours(dayIndex);
+    const nowMinutes = nowOslo.getHours() * 60 + nowOslo.getMinutes();
+    const isOpenNow = todayHours
+      && nowMinutes >= toMinutes(todayHours.start)
+      && nowMinutes < toMinutes(todayHours.end);
+
+    if (isOpenNow) {
+      statusEl.textContent = `Åpent nå til ${todayHours.end}`;
+      statusEl.classList.add('is-open');
+    } else if (todayHours && nowMinutes < toMinutes(todayHours.start)) {
+      // Stengt, men åpner senere i dag
+      statusEl.textContent = `Stengt nå · åpner ${todayHours.start}`;
+      statusEl.classList.add('is-closed');
+    } else {
+      // Stengt for dagen (enten en fridag som søndag, eller vi er forbi
+      // dagens stengetid) — finn neste åpningsdag, maks 7 dager frem.
+      let next = null;
+      for (let i = 1; i <= 7; i++) {
+        const d = (dayIndex + i) % 7;
+        const hours = getHours(d);
+        if (hours) { next = { day: DAY_NAMES[d], start: hours.start }; break; }
       }
+      statusEl.textContent = next
+        ? `Stengt nå · åpner ${next.start} ${next.day}`
+        : 'Stengt nå';
+      statusEl.classList.add('is-closed');
     }
   }
 });

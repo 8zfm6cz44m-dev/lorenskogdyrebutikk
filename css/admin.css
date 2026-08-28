@@ -122,20 +122,20 @@
    svak tint nesten usynlig — pluss at select-feltet nå også får fylt
    bakgrunnsfarge, ikke bare farget kant/tekst, siden det er der man
    faktisk ser på når man endrer status. */
-.admin-table tr[data-status="ny"] { background: rgba(240, 162, 2, .08); }
+.admin-table tr[data-status="ny"] { background: rgba(240, 162, 2, .06); }
 .admin-table tr[data-status="ny"] td:first-child { border-left: 4px solid var(--accent); }
-.admin-table tr[data-status="bekreftet"] { background: rgba(124, 217, 138, .12); }
+.admin-table tr[data-status="bekreftet"] { background: rgba(124, 217, 138, .09); }
 .admin-table tr[data-status="bekreftet"] td:first-child { border-left: 4px solid #7CD98A; }
-.admin-table tr[data-status="avvist"] { background: rgba(232, 140, 140, .12); }
+.admin-table tr[data-status="avvist"] { background: rgba(232, 140, 140, .09); }
 .admin-table tr[data-status="avvist"] td:first-child { border-left: 4px solid #E88C8C; }
 .admin-table tr[data-status="fullført"] { opacity: .55; }
 .admin-table tr[data-status="fullført"] td:first-child { border-left: 4px solid var(--muted); }
 
 .status-select { font-weight: 600; transition: background-color .15s, border-color .15s, color .15s; }
-.status-select[data-status="ny"] { background: rgba(240, 162, 2, .18); border-color: var(--accent); color: var(--accent); }
-.status-select[data-status="bekreftet"] { background: rgba(124, 217, 138, .18); border-color: #7CD98A; color: #7CD98A; }
-.status-select[data-status="avvist"] { background: rgba(232, 140, 140, .18); border-color: #E88C8C; color: #E88C8C; }
-.status-select[data-status="fullført"] { background: rgba(169, 169, 164, .18); border-color: var(--muted); color: var(--muted); }
+.status-select[data-status="ny"] { background: rgba(240, 162, 2, .13); border-color: var(--accent); color: var(--accent); }
+.status-select[data-status="bekreftet"] { background: rgba(124, 217, 138, .13); border-color: #7CD98A; color: #7CD98A; }
+.status-select[data-status="avvist"] { background: rgba(232, 140, 140, .13); border-color: #E88C8C; color: #E88C8C; }
+.status-select[data-status="fullført"] { background: rgba(169, 169, 164, .13); border-color: var(--muted); color: var(--muted); }
 .status-select[data-status="ny"] option,
 .status-select[data-status="bekreftet"] option,
 .status-select[data-status="avvist"] option,
