@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lørenskog Dyrebutikk – Fjellhamar & Vestparken</title>
-<meta name="description" content="Lørenskog Dyrebutikk på Fjellhamar og Vestparken. Alt til hund, katt og andre kjæledyr – høy kvalitet, lav pris. Se også Lørenskog Hundesalong.">
+<title>Lørenskog Hundesalong – dropin, stell og timebestilling</title>
+<meta name="description" content="Lørenskog Hundesalong: dropin på kloklipp og poterens fra 150,-. Vask, stell og klipp for din hund. Ola Hegerbergs gate 4, Lørenskog.">
 <link rel="icon" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,19 +13,21 @@
 </head>
 <body>
 
-<!-- ===== HEADER ===== -->
+<!-- ===== HEADER (samme ramme som forsiden) ===== -->
 <header class="site-header" id="top">
   <div class="container header-inner">
     <a href="index.html" class="brand">
       <img src="assets/logo.png" alt="Lørenskog Dyrebutikk logo" class="brand-logo">
     </a>
     <nav class="main-nav" id="main-nav">
-      <a href="#butikken">Butikken</a>
-      <a href="hundesalong.html">Hundesalong</a>
+      <a href="#dropin">Dropin</a>
+      <a href="#priser">Priser</a>
+      <a href="#timebestilling">Timebestilling</a>
       <a href="#apningstider">Åpningstider</a>
       <a href="#kontakt">Kontakt</a>
+      <a href="index.html" class="nav-back">← Dyrebutikken</a>
     </nav>
-    <a href="tel:40396511" class="btn btn-accent header-cta">Ring oss</a>
+    <a href="tel:+4797262060" class="btn btn-accent header-cta">Ring oss</a>
     <button class="nav-toggle" id="nav-toggle" aria-label="Åpne meny" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -36,11 +38,12 @@
 <section class="hero">
   <div class="container hero-inner">
     <img src="assets/logo.png" alt="Lørenskog Dyrebutikk – logo" class="hero-logo">
-    <p class="hero-tagline"><span class="tag-hoy">HØY</span> kvalitet &nbsp;·&nbsp; <span class="tag-lav">LAV</span> pris</p>
-    <p class="hero-status" id="open-status" data-hours-table="hours-store" data-business="Lørenskog Dyrebutikk">Sjekker åpningstider …</p>
+    <h1 class="hero-page-title">Lørenskog Hundesalong</h1>
+    <p class="hero-tagline">Dropin, stell og klipp for din hund</p>
+    <p class="hero-status" id="open-status" data-hours-table="hours-salong" data-business="Lørenskog Hundesalong">Sjekker åpningstider …</p>
     <div class="hero-actions">
-      <a href="hundesalong.html" class="btn btn-accent">Besøk Hundesalongen</a>
-      <a href="#kontakt" class="btn btn-outline">Finn oss</a>
+      <a href="#dropin" class="btn btn-accent">Se dropin-priser</a>
+      <a href="tel:+4797262060" class="btn btn-outline">Book time</a>
     </div>
     <div class="social-row">
       <a href="https://facebook.com/LorenskogDyrebutikk" target="_blank" rel="noopener" aria-label="Facebook" class="social-icon">
@@ -53,17 +56,91 @@
   </div>
 </section>
 
-<!-- ===== BUTIKKEN ===== -->
-<section class="section butikk" id="butikken">
-  <div class="container two-col reverse">
-    <div class="placeholder-img" aria-hidden="true">
-      <span class="placeholder-icon">🐾</span>
-      <span class="placeholder-text">Bilde fra butikken kommer</span>
+<!-- ===== DROPIN ===== -->
+<section class="section dropin" id="dropin">
+  <div class="container">
+    <p class="eyebrow">Ingen timebestilling nødvendig</p>
+    <h2>Dropin i salongen</h2>
+    <p class="section-lead">Bare kom innom – ingen forhåndsbestilling kreves for disse to tjenestene.</p>
+    <div class="dropin-cards">
+      <div class="dropin-card">
+        <div class="dropin-icon">✂️</div>
+        <h3>Kloklipp</h3>
+        <p class="price">150,-</p>
+        <p class="dropin-desc">Rask og skånsom klipping av klørne, utført av erfarne hender.</p>
+      </div>
+      <div class="dropin-card">
+        <div class="dropin-icon">🐾</div>
+        <h3>Poterens</h3>
+        <p class="price">150,-</p>
+        <p class="dropin-desc">Rens og stell av puter og hår mellom tærne – godt for hygiene og komfort.</p>
+      </div>
     </div>
+    <p class="dropin-note">Dropin tilbys i åpningstiden hos Lørenskog Hundesalong, Ola Hegerbergs gate 4. Ring <a href="tel:+4797262060">972 62 060</a> ved spørsmål.</p>
+  </div>
+</section>
+
+<!-- ===== PRISER / GROOMING ===== -->
+<section class="section priser" id="priser">
+  <div class="container">
+    <p class="eyebrow">Lørenskog Hundesalong</p>
+    <h2>Priser på stell og pakker</h2>
+    <p class="section-lead">Priser avhenger av rase, størrelse og pelstype. Alle priser er fra-priser – endelig pris avtales ved timebestilling.</p>
+
+    <div class="price-table-wrap">
+      <table class="price-table">
+        <thead>
+          <tr><th>Behandling</th><th>Liten rase</th><th>Mellomstor rase</th><th>Stor rase</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Behandling"><strong>Kun vask</strong><br><span class="muted">Skånsom vask med hundeshampo tilpasset pels og hudtype, grundig skyll og tørk</span></td>
+            <td data-label="Liten rase">Fra 600,-</td>
+            <td data-label="Mellomstor rase">Fra 800,-</td>
+            <td data-label="Stor rase">Fra 1000,-</td>
+          </tr>
+          <tr>
+            <td data-label="Behandling"><strong>Vask + børst</strong><br><span class="muted">Inkluderer vask, føn og grundig børsting for å fjerne løs pels og underull</span></td>
+            <td data-label="Liten rase">Fra 800,-</td>
+            <td data-label="Mellomstor rase">Fra 1000,-</td>
+            <td data-label="Stor rase">Fra 1200,-</td>
+          </tr>
+          <tr>
+            <td data-label="Behandling"><strong>Rasetyper med omfattende underull</strong></td>
+            <td colspan="3" data-label="Pris">Fra 2000,-</td>
+          </tr>
+          <tr>
+            <td data-label="Behandling"><strong>Full pakke</strong><br><span class="muted">Komplett behandling: vask, føn, børsting, klipp, samt stell av poter, ører og hygieneområder</span></td>
+            <td data-label="Liten rase">Fra 1400,-</td>
+            <td data-label="Mellomstor rase">Fra 1500,-</td>
+            <td data-label="Stor rase">Fra 1700,-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="dropin-note">Pelsstell som krever ekstra arbeid (fløker, sensitivitet, uro): tillegg 200,-. Ønsker du utstillingsklipp eller fasongklipp, ta kontakt for vurdering i salongen.</p>
+  </div>
+</section>
+
+<!-- ===== TIMEBESTILLING ===== -->
+<section class="section salong" id="timebestilling">
+  <div class="container two-col">
     <div>
-      <p class="eyebrow">Lørenskog Dyrebutikk</p>
-      <h2>Alt til din firbente venn</h2>
-      <p>Bredt utvalg av fôr, utstyr og tilbehør til hund, katt og andre kjæledyr – til høy kvalitet og lav pris. Kom innom en av våre to butikker på Fjellhamar eller Vestparken, så hjelper vi deg å finne det du trenger.</p>
+      <p class="eyebrow">Timebestilling</p>
+      <h2>Book time hos Hundesalongen</h2>
+      <p>Vi tar imot din hund til vask, stell og klipp – tilpasset rase, pelstype og behov. Har hunden din spesielle behov, allergier eller er utrygg, si gjerne fra ved bestilling så vi kan planlegge behandlingen godt.</p>
+      <ul class="check-list">
+        <li>Klipp &amp; stell</li>
+        <li>Børst &amp; bad</li>
+        <li>Kloklipp (også som dropin)</li>
+      </ul>
+      <div class="hero-actions">
+        <a href="tel:+4797262060" class="btn btn-accent">Ring for timebestilling</a>
+      </div>
+    </div>
+    <div class="placeholder-img" aria-hidden="true">
+      <span class="placeholder-icon">🐕</span>
+      <span class="placeholder-text">Bilde av salongen kommer</span>
     </div>
   </div>
 </section>
@@ -75,49 +152,43 @@
     <h2>Når vi har åpent</h2>
     <div class="hours-grid single">
       <div class="hours-card">
-        <h3>Lørenskog Dyrebutikk</h3>
-        <p class="muted small">Fjellhamar &amp; Vestparken</p>
-        <table class="hours-table" id="hours-store">
+        <h3>Lørenskog Hundesalong</h3>
+        <p class="muted small">Timebestilling og dropin</p>
+        <table class="hours-table" id="hours-salong">
           <tbody>
-            <tr data-day="1"><td>Mandag</td><td>10:00–18:00</td></tr>
-            <tr data-day="2"><td>Tirsdag</td><td>10:00–18:00</td></tr>
-            <tr data-day="3"><td>Onsdag</td><td>10:00–18:00</td></tr>
-            <tr data-day="4"><td>Torsdag</td><td>10:00–19:00</td></tr>
-            <tr data-day="5"><td>Fredag</td><td>10:00–18:00</td></tr>
-            <tr data-day="6"><td>Lørdag</td><td>10:00–16:00</td></tr>
+            <tr data-day="1"><td>Mandag</td><td>09:00–17:00</td></tr>
+            <tr data-day="2"><td>Tirsdag</td><td>09:00–17:00</td></tr>
+            <tr data-day="3"><td>Onsdag</td><td>09:00–17:00</td></tr>
+            <tr data-day="4"><td>Torsdag</td><td>09:00–17:00</td></tr>
+            <tr data-day="5"><td>Fredag</td><td>09:00–17:00</td></tr>
+            <tr data-day="6"><td>Lørdag</td><td>09:00–17:00</td></tr>
             <tr data-day="0"><td>Søndag</td><td>Stengt</td></tr>
           </tbody>
         </table>
+        <p class="fine-print">* Åpningstider for salongen kan variere noe – ring gjerne for å bekrefte.</p>
       </div>
     </div>
-    <p class="fine-print">Skal hunden til stell eller dropin? Se <a href="hundesalong.html">åpningstidene til Lørenskog Hundesalong</a>.</p>
   </div>
 </section>
 
-<!-- ===== KONTAKT / LOKASJONER ===== -->
+<!-- ===== KONTAKT ===== -->
 <section class="section kontakt" id="kontakt">
   <div class="container">
     <p class="eyebrow">Besøk oss</p>
-    <h2>Finn din nærmeste butikk</h2>
+    <h2>Finn Hundesalongen</h2>
     <div class="locations-grid">
       <div class="location-card">
-        <h3>Lørenskog Dyrebutikk – Fjellhamar</h3>
-        <p>Fjellhamarveien 56<br>1472 Fjellhamar</p>
-        <p><a href="tel:40396511">403 96 511</a></p>
-        <a class="btn btn-outline btn-small" href="https://www.google.com/maps/search/?api=1&query=Fjellhamarveien+56%2C+1472+Fjellhamar" target="_blank" rel="noopener">Vis vei</a>
-      </div>
-      <div class="location-card">
-        <h3>Lørenskog Dyrebutikk – Vestparken</h3>
+        <h3>Lørenskog Hundesalong</h3>
         <p>Ola Hegerbergs gate 4<br>1461 Lørenskog</p>
-        <p><a href="tel:40396511">403 96 511</a></p>
+        <p><a href="tel:+4797262060">972 62 060</a></p>
         <a class="btn btn-outline btn-small" href="https://www.google.com/maps/search/?api=1&query=Ola+Hegerbergs+gate+4%2C+1461+L%C3%B8renskog" target="_blank" rel="noopener">Vis vei</a>
       </div>
     </div>
-    <p class="fine-print">Skal hunden til stell? <a href="hundesalong.html#kontakt">Se adresse og kontaktinfo for Lørenskog Hundesalong</a>.</p>
+    <p class="fine-print">Skal du handle fôr eller utstyr? <a href="index.html#kontakt">Se våre butikker på Fjellhamar og Vestparken</a>.</p>
   </div>
 </section>
 
-<!-- ===== FOOTER ===== -->
+<!-- ===== FOOTER (samme ramme som forsiden) ===== -->
 <footer class="site-footer">
   <div class="container footer-inner">
     <img src="assets/logo.png" alt="Lørenskog Dyrebutikk" class="footer-logo">
