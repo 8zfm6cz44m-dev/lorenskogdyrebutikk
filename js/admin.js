@@ -70,12 +70,37 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- Bookinger ----------
+  // Statusflyt (samme mønster/mal som Fjellhamar Bistro sin
+  // bookingadmin — samme statusverdier lagres i databasen på begge
+  // steder, kun visningsteksten for "fullført" er tilpasset denne
+  // virksomheten):
+  //   ny        → kommer inn automatisk, krever manuell håndtering
+  //   bekreftet → dere har avtalt/bekreftet time med kunden
+  //   avbestilt → kunden har avbestilt (skriv gjerne årsak i notatet)
+  //   ikke møtt → kunden dukket ikke opp (og avbestilte heller ikke)
+  //   fullført  → behandlingen er gjennomført — arkiveres automatisk
+  // avbestilt / ikke møtt / fullført arkiveres (skjules fra hoved-
+  // listen) med mindre "Vis arkiv" er krysset av.
   const bookingsTbody = document.getElementById('bookings-tbody');
   const bookingsEmpty = document.getElementById('bookings-empty');
   const bookingsArchivedNote = document.getElementById('bookings-archived-note');
   const showArchivedCheckbox = document.getElementById('show-archived');
-  const STATUS_OPTIONS = ['ny', 'bekreftet', 'avvist', 'fullført'];
-  const ARCHIVED_STATUSES = ['fullført', 'avvist'];
+  const STATUS_LABELS = {
+    ny: 'Ny',
+    bekreftet: 'Bekreftet',
+    avbestilt: 'Avbestilt',
+    ikke_møtt: 'Ikke møtt',
+    fullført: 'Fullført',
+  };
+  const STATUS_OPTIONS = Object.keys(STATUS_LABELS);
+  const ARCHIVED_STATUSES = ['avbestilt', 'ikke_møtt', 'fullført'];
+
+  // Kort visuell bekreftelse ("grønn glimt") når et fritekstfelt er
+  // lagret til Supabase — brukes av "Bekreftet tid" og "Internt notat".
+  function flashSaved(el) {
+    el.classList.add('is-saved');
+    setTimeout(() => el.classList.remove('is-saved'), 900);
+  }
 
   async function loadBookings() {
     const { data, error } = await sb.from('bookings').select('*').order('created_at', { ascending: false });
@@ -88,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bookingsTbody.innerHTML = '';
     bookingsEmpty.hidden = data.length > 0;
     bookingsArchivedNote.hidden = showArchived || archivedCount === 0;
-    bookingsArchivedNote.textContent = `${archivedCount} fullført${archivedCount === 1 ? '' : 'e'}/avviste booking${archivedCount === 1 ? '' : 'er'} er arkivert og skjult — kryss av "Vis arkiv" for å se dem.`;
+    bookingsArchivedNote.textContent = `${archivedCount} avbestilt/ikke møtt/fullført booking${archivedCount === 1 ? '' : 'er'} er arkivert og skjult — kryss av «Vis arkiv» for å se dem.`;
 
     visible.forEach(b => {
       const tr = document.createElement('tr');
@@ -100,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       STATUS_OPTIONS.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s;
-        opt.textContent = s;
+        opt.textContent = STATUS_LABELS[s];
         if (s === b.status) opt.selected = true;
         statusSelect.appendChild(opt);
       });
@@ -110,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tr.dataset.status = newStatus;
         statusSelect.dataset.status = newStatus;
         await sb.from('bookings').update({ status: newStatus }).eq('id', b.id);
-        // Fullført og avvist skal arkiveres (skjules) med mindre "Vis arkiv" er krysset av
+        // Avbestilt/ikke møtt/fullført skal arkiveres (skjules) med mindre "Vis arkiv" er krysset av
         if (ARCHIVED_STATUSES.includes(newStatus) && !showArchivedCheckbox.checked) {
           loadBookings();
         }
@@ -137,7 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
       confirmedInput.value = b.confirmed_time || '';
       confirmedInput.addEventListener('blur', async () => {
         const value = confirmedInput.value.trim();
-        await sb.from('bookings').update({ confirmed_time: value || null }).eq('id', b.id);
+        if (value === (b.confirmed_time || '')) return;
+        const { error: saveError } = await sb.from('bookings').update({ confirmed_time: value || null }).eq('id', b.id);
+        if (!saveError) { b.confirmed_time = value; flashSaved(confirmedInput); }
       });
       confirmedInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); confirmedInput.blur(); }
@@ -154,6 +181,24 @@ document.addEventListener('DOMContentLoaded', () => {
         td.textContent = text;
         tr.appendChild(td);
       });
+
+      // Internt notat — fritekst kun for ansatte (f.eks. årsak til
+      // avbestilling, spesielle ønsker). Lagres når feltet forlates.
+      const noteTd = document.createElement('td');
+      const noteInput = document.createElement('textarea');
+      noteInput.className = 'admin-note';
+      noteInput.rows = 1;
+      noteInput.placeholder = 'Notat …';
+      noteInput.value = b.admin_comment || '';
+      noteInput.addEventListener('blur', async () => {
+        const value = noteInput.value.trim();
+        if (value === (b.admin_comment || '')) return;
+        const { error: saveError } = await sb.from('bookings').update({ admin_comment: value || null }).eq('id', b.id);
+        if (!saveError) { b.admin_comment = value; flashSaved(noteInput); }
+      });
+      noteTd.appendChild(noteInput);
+      tr.appendChild(noteTd);
+
       const statusTd = document.createElement('td');
       statusTd.appendChild(statusSelect);
       tr.appendChild(statusTd);

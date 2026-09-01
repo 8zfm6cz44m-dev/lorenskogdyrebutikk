@@ -100,6 +100,7 @@
 .admin-table tr:last-child td { border-bottom: none; }
 .admin-table input[type="text"],
 .admin-table input[type="number"],
+.admin-table textarea,
 .admin-table select {
   width: 100%;
   min-width: 90px;
@@ -126,20 +127,28 @@
 .admin-table tr[data-status="ny"] td:first-child { border-left: 4px solid var(--accent); }
 .admin-table tr[data-status="bekreftet"] { background: rgba(124, 217, 138, .09); }
 .admin-table tr[data-status="bekreftet"] td:first-child { border-left: 4px solid #7CD98A; }
-.admin-table tr[data-status="avvist"] { background: rgba(232, 140, 140, .09); }
-.admin-table tr[data-status="avvist"] td:first-child { border-left: 4px solid #E88C8C; }
+.admin-table tr[data-status="avbestilt"] { background: rgba(232, 140, 140, .09); }
+.admin-table tr[data-status="avbestilt"] td:first-child { border-left: 4px solid #E88C8C; }
+.admin-table tr[data-status="ikke_møtt"] { background: rgba(155, 140, 232, .09); }
+.admin-table tr[data-status="ikke_møtt"] td:first-child { border-left: 4px solid #9B8CE8; }
 .admin-table tr[data-status="fullført"] { opacity: .55; }
 .admin-table tr[data-status="fullført"] td:first-child { border-left: 4px solid var(--muted); }
 
 .status-select { font-weight: 600; transition: background-color .15s, border-color .15s, color .15s; }
 .status-select[data-status="ny"] { background: rgba(240, 162, 2, .13); border-color: var(--accent); color: var(--accent); }
 .status-select[data-status="bekreftet"] { background: rgba(124, 217, 138, .13); border-color: #7CD98A; color: #7CD98A; }
-.status-select[data-status="avvist"] { background: rgba(232, 140, 140, .13); border-color: #E88C8C; color: #E88C8C; }
+.status-select[data-status="avbestilt"] { background: rgba(232, 140, 140, .13); border-color: #E88C8C; color: #E88C8C; }
+.status-select[data-status="ikke_møtt"] { background: rgba(155, 140, 232, .13); border-color: #9B8CE8; color: #9B8CE8; }
 .status-select[data-status="fullført"] { background: rgba(169, 169, 164, .13); border-color: var(--muted); color: var(--muted); }
 .status-select[data-status="ny"] option,
 .status-select[data-status="bekreftet"] option,
-.status-select[data-status="avvist"] option,
+.status-select[data-status="avbestilt"] option,
+.status-select[data-status="ikke_møtt"] option,
 .status-select[data-status="fullført"] option { color: var(--text); background: var(--bg); }
+
+.admin-note { width: 100%; min-width: 150px; resize: vertical; line-height: 1.4; }
+.admin-note.is-saved,
+.admin-table input.is-saved { background: rgba(124, 217, 138, .18) !important; border-color: #7CD98A !important; transition: background-color .2s, border-color .2s; }
 
 .bookings-filter {
   display: flex;

@@ -1,6 +1,7 @@
 -- ============================================================
 -- Lørenskog Dyrebutikk & Hundesalong — Supabase schema
--- Kjør denne i Supabase → SQL Editor (kjør alt på én gang)
+-- Kjør denne i Supabase → SQL Editor (kjør alt på én gang).
+-- Trygt å kjøre flere ganger — hele filen er idempotent.
 -- ============================================================
 
 -- ---------- BOOKINGS (timebestillinger fra Hundesalong-siden) ----------
@@ -16,30 +17,35 @@ create table if not exists public.bookings (
   preferred_time text,
   confirmed_time text,
   message text,
-  status text not null default 'ny' check (status in ('ny', 'bekreftet', 'avvist', 'fullført')),
+  admin_comment text,
+  status text not null default 'ny' check (status in ('ny', 'bekreftet', 'avbestilt', 'ikke_møtt', 'fullført')),
   photo_ok boolean not null default true
 );
 
 alter table public.bookings enable row level security;
 
 -- Hvem som helst (også ikke-innloggede besøkende) kan LEGGE INN en booking …
+drop policy if exists "Alle kan sende inn booking" on public.bookings;
 create policy "Alle kan sende inn booking"
   on public.bookings for insert
-  to anon
+  to anon, authenticated
   with check (true);
 
 -- … men KUN innloggede admin-brukere kan LESE/ENDRE/SLETTE bookinger.
+drop policy if exists "Kun innlogget admin kan lese bookinger" on public.bookings;
 create policy "Kun innlogget admin kan lese bookinger"
   on public.bookings for select
   to authenticated
   using (true);
 
+drop policy if exists "Kun innlogget admin kan oppdatere bookinger" on public.bookings;
 create policy "Kun innlogget admin kan oppdatere bookinger"
   on public.bookings for update
   to authenticated
   using (true)
   with check (true);
 
+drop policy if exists "Kun innlogget admin kan slette bookinger" on public.bookings;
 create policy "Kun innlogget admin kan slette bookinger"
   on public.bookings for delete
   to authenticated
@@ -64,23 +70,27 @@ create table if not exists public.prices (
 alter table public.prices enable row level security;
 
 -- Alle (også besøkende på nettsiden) kan LESE priser …
+drop policy if exists "Alle kan lese priser" on public.prices;
 create policy "Alle kan lese priser"
   on public.prices for select
   to anon, authenticated
   using (true);
 
 -- … men KUN innlogget admin kan legge til/endre/slette priser.
+drop policy if exists "Kun innlogget admin kan legge til priser" on public.prices;
 create policy "Kun innlogget admin kan legge til priser"
   on public.prices for insert
   to authenticated
   with check (true);
 
+drop policy if exists "Kun innlogget admin kan oppdatere priser" on public.prices;
 create policy "Kun innlogget admin kan oppdatere priser"
   on public.prices for update
   to authenticated
   using (true)
   with check (true);
 
+drop policy if exists "Kun innlogget admin kan slette priser" on public.prices;
 create policy "Kun innlogget admin kan slette priser"
   on public.prices for delete
   to authenticated
@@ -116,3 +126,34 @@ on conflict (section, name) do nothing;
 insert into public.prices (section, name, description, price_flat, sort_order) values
   ('stell', 'Rasetyper med omfattende underull', null, 2000, 3)
 on conflict (section, name) do nothing;
+
+
+-- ============================================================
+-- MIGRERING — for tabeller som allerede finnes fra før (kjør
+-- HELE denne filen på nytt i Supabase → SQL Editor, den er trygg
+-- å kjøre om igjen). Lagt til 2026-09-01: internt notat-felt +
+-- utvidet statusflyt (avbestilt/ikke møtt i tillegg til
+-- bekreftet/fullført).
+-- ============================================================
+
+alter table public.bookings add column if not exists admin_comment text;
+
+-- Gamle "avvist"-statuser (fra en tidligere versjon) regnes nå som "avbestilt".
+update public.bookings set status = 'avbestilt' where status = 'avvist';
+
+do $$
+declare r record;
+begin
+  for r in
+    select conname from pg_constraint
+    where conrelid = 'public.bookings'::regclass
+      and contype = 'c'
+      and pg_get_constraintdef(oid) ilike '%status%'
+  loop
+    execute format('alter table public.bookings drop constraint %I', r.conname);
+  end loop;
+end $$;
+
+alter table public.bookings
+  add constraint bookings_status_check
+  check (status in ('ny', 'bekreftet', 'avbestilt', 'ikke_møtt', 'fullført'));
