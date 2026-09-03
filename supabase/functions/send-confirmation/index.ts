@@ -35,7 +35,7 @@ const ALLOWED_TABLES = new Set(['restaurant_bookings', 'bookings']);
 // i Resend (ellers svarer Resend med feil for alle andre mottakere enn
 // kontoeierens egen adresse). Sett til null/'' når et ekte domene er på
 // plass, så sendes det til gjestens/kundens faktiske adresse igjen.
-const TEST_RECIPIENT_OVERRIDE = '';
+const TEST_RECIPIENT_OVERRIDE = 'elofsson.martin@gmail.com';
 
 const SITE_CONFIG: Record<string, {
   fromName: string;
