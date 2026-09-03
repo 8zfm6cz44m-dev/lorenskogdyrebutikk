@@ -150,6 +150,11 @@
 .admin-note.is-saved,
 .admin-table input.is-saved { background: rgba(124, 217, 138, .18) !important; border-color: #7CD98A !important; transition: background-color .2s, border-color .2s; }
 
+/* Statuslinje under "Status"-nedtrekksmenyen som viser om bekreftelses-
+   e-post er sendt (eller hvorfor den ikke ble sendt). */
+.email-status { margin-top: 6px; font-size: 11px; line-height: 1.3; min-height: 1.3em; }
+.email-status.is-error-note { color: #E88C8C; }
+
 .bookings-filter {
   display: flex;
   align-items: center;

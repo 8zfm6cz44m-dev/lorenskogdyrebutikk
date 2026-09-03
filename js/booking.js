@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const payload = {
       name: fd.get('name')?.toString().trim(),
       phone: fd.get('phone')?.toString().trim(),
+      email: fd.get('email')?.toString().trim() || null,
       dog_name: fd.get('dog_name')?.toString().trim(),
       breed: fd.get('breed')?.toString().trim(),
       service: fd.get('service')?.toString().trim(),

@@ -122,6 +122,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const statusSelect = document.createElement('select');
       statusSelect.className = 'status-select';
       statusSelect.dataset.status = b.status;
+
+      // Liten statuslinje under nedtrekksmenyen som viser om/når
+      // bekreftelses-e-post er sendt til kunden.
+      const emailNoteEl = document.createElement('div');
+      emailNoteEl.className = 'email-status small muted';
+      if (b.confirmation_sent_at) {
+        emailNoteEl.textContent = `✓ Bekreftelse sendt ${new Date(b.confirmation_sent_at).toLocaleString('no-NO', { dateStyle: 'short', timeStyle: 'short' })}`;
+      }
+
       STATUS_OPTIONS.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s;
@@ -130,11 +139,34 @@ document.addEventListener('DOMContentLoaded', () => {
         statusSelect.appendChild(opt);
       });
       statusSelect.addEventListener('change', async () => {
+        const previousStatus = b.status;
         const newStatus = statusSelect.value;
         // Oppdater farge på rad + felt med det samme, uten å vente på nettverket
         tr.dataset.status = newStatus;
         statusSelect.dataset.status = newStatus;
-        await sb.from('bookings').update({ status: newStatus }).eq('id', b.id);
+        statusSelect.disabled = true;
+
+        const { error: updateError } = await sb.from('bookings').update({ status: newStatus }).eq('id', b.id);
+        if (updateError) {
+          // Lagringen feilet — rull tilbake visningen i stedet for å late
+          // som endringen gikk gjennom (den gjorde ikke det).
+          console.error(updateError);
+          tr.dataset.status = previousStatus;
+          statusSelect.dataset.status = previousStatus;
+          statusSelect.value = previousStatus;
+          statusSelect.disabled = false;
+          alert('Kunne ikke lagre statusendringen. Prøv igjen.');
+          return;
+        }
+        b.status = newStatus;
+        statusSelect.disabled = false;
+
+        // Ved "Bekreftet": send bekreftelses-e-post med avbestillingslenke
+        // automatisk, hvis kunden har oppgitt e-post.
+        if (newStatus === 'bekreftet' && previousStatus !== 'bekreftet') {
+          sendConfirmationEmail(b, emailNoteEl);
+        }
+
         // Avbestilt/ikke møtt/fullført skal arkiveres (skjules) med mindre "Vis arkiv" er krysset av
         if (ARCHIVED_STATUSES.includes(newStatus) && !showArchivedCheckbox.checked) {
           loadBookings();
@@ -143,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const cellsBefore = [
         new Date(b.created_at).toLocaleString('no-NO', { dateStyle: 'short', timeStyle: 'short' }),
-        b.name, b.phone, b.dog_name || '–', b.breed || '–', b.service,
+        b.name, b.phone, b.email || '–', b.dog_name || '–', b.breed || '–', b.service,
         b.preferred_date || '–',
         b.preferred_time || '–',
       ];
@@ -201,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const statusTd = document.createElement('td');
       statusTd.appendChild(statusSelect);
+      statusTd.appendChild(emailNoteEl);
       tr.appendChild(statusTd);
 
       bookingsTbody.appendChild(tr);
@@ -208,6 +241,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   document.getElementById('refresh-bookings').addEventListener('click', loadBookings);
   showArchivedCheckbox.addEventListener('change', loadBookings);
+
+  // Sender bekreftelses-e-post (med avbestillingslenke) via Edge Function
+  // "send-confirmation" (delt med Fjellhamar Bistro, samme Supabase-
+  // prosjekt). Krever at kunden har oppgitt e-post, og at Supabase-
+  // hemmeligheten RESEND_API_KEY er satt opp (se README/chat for
+  // instruksjoner) — inntil da svarer funksjonen med en feil som vises her.
+  async function sendConfirmationEmail(booking, noteEl) {
+    if (!booking.email) {
+      if (noteEl) { noteEl.textContent = 'Ingen e-post oppgitt — kan ikke varsle automatisk.'; noteEl.classList.add('is-error-note'); }
+      return;
+    }
+    if (noteEl) { noteEl.textContent = 'Sender bekreftelse …'; noteEl.classList.remove('is-error-note'); }
+    try {
+      const cancelBaseUrl = `${location.origin}${location.pathname.replace(/admin\.html$/, 'avbestill.html')}`;
+      const { data, error } = await sb.functions.invoke('send-confirmation', {
+        body: { table: 'bookings', id: booking.id, cancelBaseUrl },
+      });
+      if (error || !data || !data.ok) {
+        const reason = (data && data.reason) || (error && error.message) || 'ukjent feil';
+        if (noteEl) { noteEl.textContent = `E-post ikke sendt (${reason}).`; noteEl.classList.add('is-error-note'); }
+        return;
+      }
+      booking.confirmation_sent_at = new Date().toISOString();
+      if (noteEl) {
+        noteEl.textContent = `✓ Bekreftelse sendt ${new Date(booking.confirmation_sent_at).toLocaleString('no-NO', { dateStyle: 'short', timeStyle: 'short' })}`;
+        noteEl.classList.remove('is-error-note');
+      }
+    } catch (err) {
+      console.error(err);
+      if (noteEl) { noteEl.textContent = 'E-post ikke sendt (nettverksfeil).'; noteEl.classList.add('is-error-note'); }
+    }
+  }
 
   // ---------- Priser ----------
   const pricesTbody = document.getElementById('prices-tbody');

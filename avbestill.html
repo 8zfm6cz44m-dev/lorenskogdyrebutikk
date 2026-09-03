@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Avbestill time – Lørenskog Dyrebutikk</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .cancel-wrap { max-width: 480px; margin: 0 auto; padding: 96px 24px 120px; text-align: center; }
+  .cancel-wrap h1 { margin-bottom: 16px; }
+  .cancel-wrap .muted { margin-bottom: 32px; }
+  #cb-result { margin-top: 20px; min-height: 1.5em; }
+</style>
+</head>
+<body>
+
+<main class="container cancel-wrap">
+  <h1>Avbestill time</h1>
+  <p class="muted" id="cb-info">Laster bestillingen din …</p>
+  <button id="cb-confirm" class="btn btn-accent" hidden>Ja, avbestill timen</button>
+  <p class="form-status" id="cb-result" role="status" aria-live="polite"></p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/supabase-config.js" defer></script>
+<script src="js/avbestill.js" defer></script>
+</body>
+</html>

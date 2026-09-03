@@ -159,3 +159,22 @@ update public.bookings set status = 'avbestilt' where status = 'avvist';
 alter table public.bookings
   add constraint bookings_status_check
   check (status in ('ny', 'bekreftet', 'avbestilt', 'ikke_møtt', 'fullført'));
+
+
+-- ============================================================
+-- MIGRERING — lagt til 2026-09-03: automatisk bekreftelses-e-post med
+-- avbestillingslenke. "email" er nytt (skjemaet hadde ikke e-postfelt
+-- fra før — lagt til i hundesalong.html som valgfritt felt).
+-- "cancel_token" er en tilfeldig, ugjettbar kode som brukes i lenken
+-- kunden får i e-posten (se avbestill.html og Edge Function-ene i
+-- supabase/functions/). "confirmation_sent_at" lar admin-panelet vise
+-- om/når e-posten faktisk ble sendt.
+-- ============================================================
+
+alter table public.bookings add column if not exists email text;
+
+alter table public.bookings
+  add column if not exists cancel_token uuid not null default gen_random_uuid();
+
+alter table public.bookings
+  add column if not exists confirmation_sent_at timestamptz;
