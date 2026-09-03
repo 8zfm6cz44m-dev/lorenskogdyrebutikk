@@ -141,12 +141,31 @@ document.addEventListener('DOMContentLoaded', () => {
       statusSelect.addEventListener('change', async () => {
         const previousStatus = b.status;
         const newStatus = statusSelect.value;
+
+        // Kunden har ofte bare oppgitt "Ønsket tid" som Formiddag/Ettermiddag/
+        // Uansett (eller ingenting) — salongen må derfor ALLTID selv avtale og
+        // skrive inn et konkret tidspunkt i "Bekreftet tid" før statusen kan
+        // settes til Bekreftet, siden det er nettopp dette tidspunktet kunden
+        // får i bekreftelses-e-posten.
+        if (newStatus === 'bekreftet' && !confirmedInput.value.trim()) {
+          statusSelect.value = previousStatus;
+          alert('Skriv inn «Bekreftet tid» (f.eks. 14:30) for denne bookingen før du setter status til Bekreftet — det er denne tiden kunden får i bekreftelses-e-posten.');
+          confirmedInput.focus();
+          return;
+        }
+
         // Oppdater farge på rad + felt med det samme, uten å vente på nettverket
         tr.dataset.status = newStatus;
         statusSelect.dataset.status = newStatus;
         statusSelect.disabled = true;
 
-        const { error: updateError } = await sb.from('bookings').update({ status: newStatus }).eq('id', b.id);
+        const updatePayload = { status: newStatus };
+        // Lagre bekreftet tid i samme kall (i tilfelle feltet nettopp ble
+        // skrevet i og ikke rukket å lagres via "blur" ennå).
+        if (newStatus === 'bekreftet') {
+          updatePayload.confirmed_time = confirmedInput.value.trim();
+        }
+        const { error: updateError } = await sb.from('bookings').update(updatePayload).eq('id', b.id);
         if (updateError) {
           // Lagringen feilet — rull tilbake visningen i stedet for å late
           // som endringen gikk gjennom (den gjorde ikke det).
@@ -159,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         b.status = newStatus;
+        if (updatePayload.confirmed_time !== undefined) b.confirmed_time = updatePayload.confirmed_time;
         statusSelect.disabled = false;
 
         // Ved "Bekreftet": send bekreftelses-e-post med avbestillingslenke
