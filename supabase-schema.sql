@@ -138,9 +138,8 @@ on conflict (section, name) do nothing;
 
 alter table public.bookings add column if not exists admin_comment text;
 
--- Gamle "avvist"-statuser (fra en tidligere versjon) regnes nå som "avbestilt".
-update public.bookings set status = 'avbestilt' where status = 'avvist';
-
+-- Fjern den GAMLE statusbegrensningen FØRST — ellers avviser den under-
+-- veis UPDATE-en rett nedenfor (den tillot ikke "avbestilt" ennå).
 do $$
 declare r record;
 begin
@@ -153,6 +152,9 @@ begin
     execute format('alter table public.bookings drop constraint %I', r.conname);
   end loop;
 end $$;
+
+-- Gamle "avvist"-statuser (fra en tidligere versjon) regnes nå som "avbestilt".
+update public.bookings set status = 'avbestilt' where status = 'avvist';
 
 alter table public.bookings
   add constraint bookings_status_check
