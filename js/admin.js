@@ -259,7 +259,19 @@ document.addEventListener('DOMContentLoaded', () => {
         body: { table: 'bookings', id: booking.id, cancelBaseUrl },
       });
       if (error || !data || !data.ok) {
-        const reason = (data && data.reason) || (error && error.message) || 'ukjent feil';
+        // Når funksjonen svarer med en feilkode (4xx/5xx), gir supabase-js
+        // bare en generisk "non-2xx status code"-melding i error.message —
+        // selve grunnen (data.reason) ligger i responskroppen, tilgjengelig
+        // via error.context (et Fetch Response-objekt). Hent den ut her, så
+        // notatet viser den faktiske årsaken i stedet for en generisk melding.
+        let reason = (data && data.reason) || (error && error.message) || 'ukjent feil';
+        if (error && error.context && typeof error.context.json === 'function') {
+          try {
+            const body = await error.context.json();
+            if (body && body.reason) reason = body.reason;
+            if (body && body.detail) reason += `: ${body.detail}`;
+          } catch (e) { /* behold generisk melding hvis responsen ikke er JSON */ }
+        }
         if (noteEl) { noteEl.textContent = `E-post ikke sendt (${reason}).`; noteEl.classList.add('is-error-note'); }
         return;
       }
