@@ -277,6 +277,7 @@ a:hover { text-decoration: underline; }
 .booking-form input[type="text"],
 .booking-form input[type="tel"],
 .booking-form input[type="date"],
+.booking-form input[type="email"],
 .booking-form select,
 .booking-form textarea {
   width: 100%;
