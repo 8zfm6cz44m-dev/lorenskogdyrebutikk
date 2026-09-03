@@ -88,11 +88,24 @@ function escapeHtml(str: unknown) {
   return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]);
 }
 
+// CORS: PÅKREVD siden funksjonen kalles fra nettleseren (admin.js på
+// github.io-domenet) — uten disse headerne blokkerer nettleseren svaret
+// med en CORS-feil (synlig i konsollen, F12), selv om selve funksjonen
+// kjører helt fint. En "vanlig" server-til-server-forespørsel (f.eks.
+// curl) rammes ikke av dette, kun kall fra en nettside — derfor kan
+// funksjonen se ut til å "ikke virke" bare fra admin-panelet.
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } });
 }
 
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS });
   if (req.method !== 'POST') return json({ ok: false, reason: 'method_not_allowed' }, 405);
 
   try {

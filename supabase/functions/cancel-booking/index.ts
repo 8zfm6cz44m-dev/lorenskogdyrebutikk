@@ -21,11 +21,22 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const ALLOWED_TABLES = new Set(['restaurant_bookings', 'bookings']);
 const CANCELLABLE_STATUSES = new Set(['ny', 'bekreftet']);
 
+// CORS: PÅKREVD siden funksjonen kalles fra nettleseren (avbestill.js på
+// github.io-domenet, samt admin.js) — uten disse headerne blokkerer
+// nettleseren svaret med en CORS-feil (synlig i konsollen, F12), selv om
+// funksjonen kjører helt fint på serversiden.
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } });
 }
 
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS });
   if (req.method !== 'POST') return json({ ok: false, reason: 'method_not_allowed' }, 405);
 
   try {
