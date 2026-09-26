@@ -123,6 +123,16 @@ a:hover { text-decoration: underline; }
 .brand { display: flex; align-items: center; flex-shrink: 0; }
 .brand-logo { height: 44px; width: auto; display: block; }
 
+/* Diskret utmerkelses-badge (DN Gaselle) i headeren, til venstre for
+   logoen - liten nok til å ikke konkurrere med merkevaren, men synlig
+   som et tillitssignal på alle sider (headeren er delt av hele siten).
+   Lenker til Lørenskog Dyrebutikks offisielle Gaselle-side hos DN. */
+.header-badge-link { display: flex; align-items: center; flex-shrink: 0; }
+.header-badge { height: 40px; width: auto; display: block; border-radius: 6px; }
+@media (max-width: 420px) {
+  .header-badge { height: 32px; }
+}
+
 .main-nav {
   display: flex;
   gap: 26px;
@@ -168,7 +178,6 @@ a:hover { text-decoration: underline; }
 
 /* ---------- Hero ---------- */
 .hero {
-  position: relative;
   background: radial-gradient(circle at 50% 0%, #1c1c1c 0%, #0c0c0c 70%);
   padding: 64px 0 56px;
   text-align: center;
@@ -176,22 +185,6 @@ a:hover { text-decoration: underline; }
 }
 .hero-inner { display: flex; flex-direction: column; align-items: center; }
 .hero-logo { width: min(340px, 80vw); height: auto; margin-bottom: 8px; }
-
-/* Diskret utmerkelses-badge (DN Gaselle) i hjørnet av hero-seksjonen –
-   liten nok til å ikke konkurrere med hovedbudskapet, men synlig som et
-   tillitssignal. Skjules ikke, men krymper videre på svært smale skjermer. */
-.hero-badge {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  width: 68px;
-  height: auto;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, .45));
-  z-index: 2;
-}
-@media (max-width: 560px) {
-  .hero-badge { width: 48px; top: 12px; left: 12px; }
-}
 
 .hero-page-title {
   font-size: clamp(1.8rem, 4vw, 2.6rem);
