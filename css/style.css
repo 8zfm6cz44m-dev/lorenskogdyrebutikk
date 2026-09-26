@@ -128,10 +128,7 @@ a:hover { text-decoration: underline; }
    som et tillitssignal på alle sider (headeren er delt av hele siten).
    Lenker til Lørenskog Dyrebutikks offisielle Gaselle-side hos DN. */
 .header-badge-link { display: flex; align-items: center; flex-shrink: 0; }
-.header-badge { height: 40px; width: auto; display: block; border-radius: 6px; }
-@media (max-width: 420px) {
-  .header-badge { height: 32px; }
-}
+.header-badge { height: 44px; width: auto; display: block; border-radius: 6px; }
 
 .main-nav {
   display: flex;
